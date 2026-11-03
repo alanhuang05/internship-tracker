@@ -14,15 +14,15 @@
 
 /* Dashboard refinements: colored counters and spacious three-column desktop layout */
 .shell{max-width:1900px;padding-left:26px;padding-right:26px}
-.workspace{grid-template-columns:minmax(580px,1fr) minmax(245px,300px) minmax(340px,440px);gap:16px;align-items:start}
+.workspace{grid-template-columns:minmax(0,1fr) 285px 285px;gap:14px;align-items:start}
 .sidebar{position:static}
-.calendar{margin:0;padding:21px 22px;min-width:0;border-top:1px solid #e6ecf4}
+.calendar{margin:0;padding:19px 16px;min-width:0;border-top:1px solid #e6ecf4}
 .calhead h2{font-size:18px}
-.calgrid{gap:5px}
+.calgrid{gap:3px}
 .calweekday{font-size:11px;padding:7px 0 10px}
-.calday{min-height:66px;padding:7px 3px 5px;gap:4px;border-radius:10px}
-.calnum{width:27px;height:27px;font-size:13px}
-.caleventlabel{font-size:10px;padding:0 3px}
+.calday{min-height:49px;padding:5px 2px 3px;gap:2px;border-radius:9px}
+.calnum{width:23px;height:23px;font-size:12px}
+.caleventlabel{font-size:9px;padding:0 2px}
 .caldot{width:6px;height:6px}
 .calmonth{font-size:15px}
 .calagendatitle{font-size:13px}
@@ -32,13 +32,13 @@
 .stat-dot.offers{background:#76b987}
 .stat-dot.tasks{background:#e78c96}
 .stat-dot.waiting{background:#e6bf60}
-@media(max-width:1390px){
- .workspace{grid-template-columns:minmax(0,1fr) minmax(230px,280px) minmax(300px,370px)}
+@media(max-width:1450px){
+ .workspace{grid-template-columns:minmax(0,1fr) 265px 260px}
  .shell{padding-left:16px;padding-right:16px}
- .calendar{padding:18px 15px}
- .calday{min-height:59px}
+ .calendar{padding:18px 13px}
+ .calday{min-height:47px}
 }
-@media(max-width:1160px){
+@media(max-width:1300px){
  .workspace{grid-template-columns:minmax(0,1fr) minmax(300px,420px)}
  .workspace>.panel:first-child{grid-column:1/-1}
  .calendar{grid-column:2;grid-row:2}
@@ -51,8 +51,19 @@
  .sideentries{grid-template-columns:1fr}
  .calday{min-height:55px}
 }
+
+/* Cloud account & sync controls */
+.cloudtools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cloudstatus{font-size:12px;font-weight:700;color:#64748b;padding:8px 10px;background:#eef2f8;border-radius:9px}
+.cloudstatus.online{background:#e7f6ee;color:#246d49}.cloudstatus.error{background:#fcebee;color:#a63950}
+.clouddialog{width:min(520px,calc(100vw - 24px))}.cloudmsg{font-size:12px;color:#64748b;line-height:1.55;white-space:pre-wrap}
+.clouddialog .modal p{margin-bottom:12px}.cloudrow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.cloudfields{display:grid;gap:12px}.cloudfields label{display:grid;gap:6px;font-size:12px;font-weight:700;color:#607086}
+.cloudfields input{padding:12px;border:1px solid #dbe4ef;border-radius:9px;font:inherit;font-size:13px;width:100%}
+.clouddialog .button{font-size:12px}.cloudhint{margin-top:14px;font-size:12px;line-height:1.55;color:#7c8aa0}
+@media(max-width:600px){.cloudtools{width:100%;justify-content:space-between}}
 </style></head><body><main class="shell">
-<header><div><div class="eyebrow">Career dashboard · 2027</div><h1>Internship Tracker ✳</h1><p>Applications, action items, interview dates, and notes in one place.</p></div><button class="button primary" id="newBtn">＋ Add application</button></header>
+<header><div><div class="eyebrow">Career dashboard · 2027</div><h1>Internship Tracker ✳</h1><p>Applications, action items, interview dates, and notes in one place.</p></div><div class="cloudtools"><span id="cloudStatus" class="cloudstatus">Local only</span><button type="button" class="button" id="cloudAccountBtn">☁ Cloud sync</button><button class="button primary" id="newBtn">＋ Add application</button></div></header>
 <section class="stats" id="stats"></section><div class="workspace"><section class="panel"><div class="panelhead"><strong>Applications <span id="count" class="muted"></span></strong><span id="updated">Saved in your browser</span></div>
 <nav class="tabs" aria-label="Tracker views"><button class="tab active" data-tab="all">All</button><button class="tab" data-tab="todo">To-Do</button><button class="tab" data-tab="waiting">Waiting</button></nav>
 <div id="applicationView"><div class="toolbar"><input id="search" class="field search" type="search" placeholder="⌕  Search company or role…" aria-label="Search applications"><select id="statusFilter" class="field" aria-label="Filter by status"><option value="">All statuses</option></select><select id="seasonFilter" class="field" aria-label="Filter term"><option value="">All terms</option></select><select id="sort" class="field" aria-label="Sort applications"><option value="order">Sort: Custom order</option><option value="todo">Sort: To-Do first</option><option value="action">Sort: Action</option><option value="company">Sort: Company A–Z</option><option value="status">Sort: Status</option><option value="updated">Sort: Recently updated</option><option value="interview">Sort: Interview date</option></select></div>
@@ -60,14 +71,25 @@
 </section>
 <aside class="panel sidebar" aria-label="Interview schedule and notes"><div class="sidehead"><h2>▣ Interview Schedule &amp; Notes</h2></div><p class="sideintro">Upcoming interviews and scheduling steps. Click an entry to set or edit its date, time, and notes.</p><div class="sideentries" id="sideEntries"></div><button class="button primary sidebutton" id="addInterviewBtn" type="button">＋ Add interview</button><p class="sidefoot">Interview and Scheduling Interview applications appear automatically. Dates are only displayed when you enter them.</p>
 </aside><section class="panel calendar" aria-label="Interview calendar"><div class="calhead"><h2>▦ Interview Calendar</h2><div class="calnav"><button type="button" id="calPrev" aria-label="Previous month">‹</button><button type="button" id="calNext" aria-label="Next month">›</button></div></div><div class="calmonth"><span id="calMonthLabel"></span><button type="button" class="caltoday" id="calToday">Today</button></div><div class="calgrid" id="calGrid" role="group" aria-label="Calendar days"></div><div class="calagenda" id="calAgenda" aria-live="polite"></div><div class="callegend"><i></i> Days with scheduled interviews</div></section></div>
-<div class="footer"><span>Saved in this browser only · Export a backup before clearing browser data · GitHub Pages hosting does not sync data between devices</span><div class="buttons"><button class="button" id="exportBtn">↓ Export CSV</button><button class="button" id="jsonBtn">↓ Backup JSON</button><label class="button">↑ Import JSON<input type="file" id="importFile" accept=".json,application/json" hidden></label></div></div></main>
+<div class="footer"><span>Local browser backup available · Sign in to enable cross-device sync · Export JSON regularly</span><div class="buttons"><button class="button" id="exportBtn">↓ Export CSV</button><button class="button" id="jsonBtn">↓ Backup JSON</button><label class="button">↑ Import JSON<input type="file" id="importFile" accept=".json,application/json" hidden></label></div></div></main>
 <dialog id="editor"><form id="editForm" class="modal"><h2 id="modalTitle">Application</h2><p>Add details about your next interview or recruiting step.</p><div class="formgrid"><label>Company<input id="company" required maxlength="100" placeholder="Company"></label><label>Position<input id="role" required maxlength="160" placeholder="Software Engineering Intern"></label><label>Term<input id="term" required maxlength="60" placeholder="Summer 2027"></label><label>Status<select id="editStatus"></select></label><label>Legacy interview date (optional)<input type="datetime-local" id="nextDateTime"></label><label>Application URL<input type="url" id="url" placeholder="https://..."></label><label class="full">Interview &amp; recruiting notes<textarea id="notes" rows="5" placeholder="Interview format, recruiter, preparation, questions, next steps…"></textarea></label></div><div class="modalfoot"><button type="button" class="button danger hidden" id="deleteBtn">Delete</button><div class="buttons"><button type="button" id="cancelBtn" class="button">Cancel</button><button type="submit" class="button primary">Save application</button></div></div></form></dialog>
 
 <dialog id="interviewDialog"><form id="interviewForm" class="modal"><h2 id="interviewModalTitle">Add interview</h2><p>Choose a company and enter a confirmed date and start time. End time is optional.</p><div class="formgrid"><label class="full">Company<input id="interviewCompany" list="companySuggestions" required maxlength="100" placeholder="Type company name" autocomplete="off"><datalist id="companySuggestions"></datalist></label><label>Interview date<input type="date" id="interviewDate"></label><label>Start time<input type="time" id="interviewStart" step="60"></label><label>End time (optional)<input type="time" id="interviewEnd" step="60"></label><label>Interview format (optional)<input id="interviewFormat" maxlength="90" placeholder="e.g., Technical, recruiter screen"></label><label class="full">Interview notes<textarea id="interviewNotes" rows="4" placeholder="Interviewer, meeting link, preparation, next steps…"></textarea></label><div class="full formnote">Leave date and start time blank if the interview has not been scheduled. Both must be entered together to display a time.</div></div><div class="modalfoot"><button type="button" class="button danger hidden" id="deleteInterviewBtn">Delete interview</button><div class="buttons"><button type="button" class="button" id="cancelInterviewBtn">Cancel</button><button type="submit" class="button primary">Save interview</button></div></div></form></dialog>
+<dialog id="cloudDialog" class="clouddialog"><div class="modal"><h2>☁ Cloud sync</h2><p>Sign in to sync applications, interview dates, and notes across your devices.</p>
+<div id="cloudSettings" class="cloudfields"><label>Supabase project URL<input id="sbUrl" type="url" placeholder="https://your-project.supabase.co" autocomplete="off"></label><label>Supabase publishable / anon key<input id="sbKey" type="text" placeholder="sb_publishable_… or eyJ…" autocomplete="off"></label><div class="cloudrow"><button type="button" id="sbSaveConfig" class="button primary">Save connection settings</button></div><div class="cloudhint">Configure a Supabase project using the included setup guide. Use only its public publishable/anon key—never a service_role or secret key. For automatic setup on all devices, put the public configuration into this HTML file before publishing.</div></div>
+<div id="cloudAuth" class="cloudfields hidden"><div id="cloudAccountInfo" class="cloudmsg"></div><div id="cloudLoginFields"><label>Email<input id="sbEmail" type="email" autocomplete="email" placeholder="you@example.com"></label><label>Password<input id="sbPassword" type="password" autocomplete="current-password" placeholder="Your password" minlength="6"></label><div class="cloudrow"><button type="button" id="sbLogin" class="button primary">Sign in</button><button type="button" id="sbSignup" class="button">Create account</button><button type="button" id="sbResetPassword" class="button">Reset password</button></div></div><div class="cloudrow"><button type="button" id="sbSyncNow" class="button hidden">↻ Sync now</button><button type="button" id="sbSignout" class="button danger hidden">Sign out</button><button type="button" id="sbEditConnection" class="button">Connection settings</button></div><div id="cloudMessage" class="cloudmsg" role="status" aria-live="polite"></div></div>
+<div class="cloudrow" style="justify-content:flex-end"><button type="button" class="button" id="cloudClose">Close</button></div></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (()=>{'use strict';
 // Keep the v1 storage key: existing GitHub Pages visitors retain their saved records.
 const KEY='internship-tracker-2027-v1';
+// OPTIONAL: Paste the PUBLIC project URL and publishable/anon key below ONCE to make
+// cloud login work automatically on every phone/computer visiting GitHub Pages.
+// Never put a Supabase service_role or secret key into this HTML file!
+const PUBLIC_SUPABASE_URL='';
+const PUBLIC_SUPABASE_KEY='';
+const CLOUD_SETTINGS_KEY='internship-tracker-cloud-public-config-v1';
 const statuses=[
  ['Offer Accepted','Complete','#e8f5e9','#256b3a'],
  ['Accept Offer','To-Do','#e3f6ef','#216f59'],
@@ -94,7 +116,65 @@ data=data.map((x,i)=>({...x,id:x.id||uid(),status:normalize(x.status),order:Numb
 let currentTab='all',editing=null,interviewEditing=null;
 let calendarMonth=new Date();calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth(),1);
 let selectedCalendarDay=today();
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert('Browser storage unavailable. Export a JSON backup to preserve edits.')}};
+// Local storage remains an offline backup; authenticated changes also sync to Supabase.
+let sb=null,cloudUser=null,cloudReady=false,cloudSaving=false,cloudDirty=false,cloudSaveTimer=null,cloudLoading=false,cloudConfig=null,cloudTimer=null;
+let localChanges=0,appliedChanges=0,lastRemoteUpdate='';
+function cloudStatus(message,kind=''){const el=$('cloudStatus');el.textContent=message;el.className='cloudstatus '+kind;$('updated').textContent=message}
+function cloudMessage(message){$('cloudMessage').textContent=message}
+function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){cloudStatus('Browser storage unavailable','error')}}
+const save=()=>{saveLocal();if(sb&&cloudUser){cloudDirty=true;localChanges++;cloudStatus('Saving to cloud…');clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(flushCloud,500)}};
+function currentConfig(){let stored={};try{stored=JSON.parse(localStorage.getItem(CLOUD_SETTINGS_KEY))||{}}catch{}return {url:PUBLIC_SUPABASE_URL||stored.url||'',key:PUBLIC_SUPABASE_KEY||stored.key||''}}
+function configureCloud(c){cloudConfig=c;if(!c.url||!c.key){cloudStatus('Local only');return false}if(!/^https:\/\/[a-z0-9.-]+\.supabase\.co\/?$/i.test(c.url.trim())){cloudStatus('Invalid project URL','error');return false}if(!window.supabase?.createClient){cloudStatus('Cloud library unavailable','error');cloudMessage('Could not load Supabase. Check internet access and reload.');return false}try{sb=window.supabase.createClient(c.url.trim().replace(/\/$/,''),c.key.trim(),{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});sb.auth.onAuthStateChange((event,session)=>{queueMicrotask(()=>onAuthChange(event,session))});return true}catch(e){cloudStatus('Connection setup failed','error');cloudMessage(e.message);return false}}
+let authChangeSequence=0;
+async function onAuthChange(event,session){if(event==='PASSWORD_RECOVERY'&&sb){const newPassword=prompt('Enter a new password (at least 8 characters):');if(newPassword){if(newPassword.length<8){cloudMessage('Password must be at least 8 characters.');return}const {error}=await sb.auth.updateUser({password:newPassword});cloudMessage(error?'Password update failed: '+error.message:'Password updated.');}return}
+ const incoming=session?.user||null;
+ if(incoming&&cloudUser?.id===incoming.id&&(cloudReady||cloudLoading)){updateCloudDialog();return}
+ const serial=++authChangeSequence;
+ if(!incoming){cloudUser=null;cloudReady=false;cloudLoading=false;clearTimeout(cloudSaveTimer);cloudDirty=false;clearInterval(cloudTimer);cloudTimer=null;if(event==='SIGNED_OUT'){try{localStorage.removeItem(KEY)}catch{}data=[];render()}cloudStatus('Sign in to sync');updateCloudDialog();return}
+ cloudUser=incoming;cloudReady=false;cloudLoading=true;cloudStatus('Loading cloud data…');updateCloudDialog();
+ try{await pullCloud(true);if(serial!==authChangeSequence)return;cloudReady=true;cloudLoading=false;cloudStatus('Synced · '+incoming.email,'online');updateCloudDialog();clearInterval(cloudTimer);cloudTimer=setInterval(()=>{if(document.visibilityState==='visible')pullCloud(false)},20000)}
+ catch(e){cloudLoading=false;cloudStatus('Cloud load failed','error');cloudMessage('Could not read your cloud data: '+e.message+'. Changes will stay in the browser until sync works.');updateCloudDialog()}
+}
+async function pullCloud(initial=false){if(!sb||!cloudUser||(!initial&&(cloudDirty||cloudSaving||!cloudReady)))return;
+ const accountId=cloudUser.id;
+ const {data:row,error}=await sb.from('tracker_data').select('applications,updated_at').eq('user_id',accountId).maybeSingle();if(error)throw error;
+ if(!cloudUser||cloudUser.id!==accountId)return;
+ if(!row){if(!initial)return;
+   // Do not upload starter/demo records automatically: explicit migration confirmation.
+   const shouldUpload=confirm('No saved tracker exists in this cloud account. Upload the '+data.length+' applications currently stored in this browser?\n\nChoose OK to migrate your current applications/interviews/notes. Choose Cancel to start with an empty cloud tracker.');
+   if(shouldUpload){cloudDirty=true;localChanges++;cloudReady=true;await flushCloud();}
+   else{data=[];saveLocal();render();cloudReady=true;cloudDirty=true;localChanges++;await flushCloud();}
+   return;
+ }
+ if(!initial&&row.updated_at===lastRemoteUpdate)return;
+ // Never overwrite edits that happened during a fetch.
+ if(cloudDirty||cloudSaving)return;
+ if(!Array.isArray(row.applications))throw Error('Invalid applications data returned');
+ data=row.applications.map((x,i)=>({...x,id:x.id||uid(),status:normalize(x.status),order:Number.isFinite(x.order)?x.order:i,notes:x.notes||'',nextDateTime:x.nextDateTime||'',interviews:Array.isArray(x.interviews)?x.interviews:[]}));
+ lastRemoteUpdate=row.updated_at||'';saveLocal();render();
+ if(!initial)cloudStatus('Synced · '+cloudUser.email,'online')
+}
+async function flushCloud(){if(!sb||!cloudUser||!cloudReady||!cloudDirty||cloudSaving)return;
+ cloudSaving=true;const accountId=cloudUser.id;const version=localChanges;const snapshot=JSON.parse(JSON.stringify(data));
+ try{const {data:record,error}=await sb.from('tracker_data').upsert({user_id:accountId,applications:snapshot,updated_at:new Date().toISOString()},{onConflict:'user_id'}).select('updated_at').single();if(error)throw error;
+  if(cloudUser?.id!==accountId)return;lastRemoteUpdate=record.updated_at;appliedChanges=version;
+  if(localChanges===version){cloudDirty=false;cloudStatus('Synced · '+cloudUser.email,'online')}else{cloudDirty=true;cloudStatus('Saving to cloud…')}
+ }catch(e){cloudStatus('Sync error · local backup saved','error');cloudMessage('Save failed: '+e.message+'; your changes remain in this browser. Use Sync now to retry.')}
+ finally{cloudSaving=false;if(cloudDirty&&localChanges!==version) {clearTimeout(cloudSaveTimer);cloudSaveTimer=setTimeout(flushCloud,600)}}
+}
+function updateCloudDialog(){const configured=!!sb;$('cloudSettings').classList.toggle('hidden',configured);$('cloudAuth').classList.toggle('hidden',!configured);$('cloudLoginFields').classList.toggle('hidden',!!cloudUser);$('sbSignout').classList.toggle('hidden',!cloudUser);$('sbSyncNow').classList.toggle('hidden',!cloudUser);$('cloudAccountInfo').textContent=cloudUser?'Signed in as '+cloudUser.email:'Sign in or create an account to enable cross-device synchronization.'}
+$('cloudAccountBtn').onclick=()=>{let cfg=currentConfig();$('sbUrl').value=cfg.url;$('sbKey').value=cfg.key;updateCloudDialog();$('cloudDialog').showModal()};
+$('cloudClose').onclick=()=>$('cloudDialog').close();
+$('sbSaveConfig').onclick=()=>{const c={url:$('sbUrl').value.trim(),key:$('sbKey').value.trim()};if(!c.url||!c.key)return cloudMessage('Enter the public Supabase URL and publishable key.');if(sb){cloudMessage('Reload to change an existing connection.');return}if(configureCloud(c)){try{localStorage.setItem(CLOUD_SETTINGS_KEY,JSON.stringify(c))}catch{}cloudMessage('Connection configured. Sign in below.');updateCloudDialog();sb.auth.getSession().then(({data})=>{if(data?.session)onAuthChange('INITIAL_SESSION',data.session)})}};
+$('sbEditConnection').onclick=()=>{if(cloudUser){cloudMessage('Sign out, then reload to change cloud projects.');return}sb=null;cloudConfig=null;$('cloudSettings').classList.remove('hidden');$('cloudAuth').classList.add('hidden');$('sbUrl').value=currentConfig().url;$('sbKey').value=currentConfig().key};
+$('sbLogin').onclick=async()=>{if(!sb)return;cloudMessage('Signing in…');const {error}=await sb.auth.signInWithPassword({email:$('sbEmail').value.trim(),password:$('sbPassword').value});cloudMessage(error?'Sign-in failed: '+error.message:'Signed in. Loading your tracker…')};
+$('sbSignup').onclick=async()=>{if(!sb)return;cloudMessage('Creating account…');const {data:result,error}=await sb.auth.signUp({email:$('sbEmail').value.trim(),password:$('sbPassword').value,options:{emailRedirectTo:location.origin+location.pathname}});cloudMessage(error?'Sign-up failed: '+error.message:result.session?'Account created and signed in.':'Check your inbox to confirm your email, then sign in.')};
+$('sbResetPassword').onclick=async()=>{if(!sb)return;const email=$('sbEmail').value.trim();if(!email)return cloudMessage('Enter your email first.');const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});cloudMessage(error?error.message:'Password-reset link sent. Follow the email instructions.')};
+$('sbSignout').onclick=async()=>{if(!sb)return;if(cloudDirty){await flushCloud();if(cloudDirty){cloudMessage('Changes are not saved to the cloud yet. Retry sync or export JSON before signing out.');return}}const {error}=await sb.auth.signOut();if(error)cloudMessage(error.message);else cloudMessage('Signed out. Local cached data cleared from this browser.')};
+$('sbSyncNow').onclick=async()=>{if(!sb||!cloudUser)return;cloudMessage('Syncing…');try{if(cloudDirty)await flushCloud();else await pullCloud(false);cloudMessage(cloudDirty?'Cloud sync still pending.':'Sync complete.')}catch(e){cloudMessage('Sync failed: '+e.message);cloudStatus('Sync error','error')}};
+window.addEventListener('focus',()=>{if(sb&&cloudUser&&cloudReady&&!cloudDirty)pullCloud(false).catch(e=>cloudStatus('Sync error','error'))});
+window.addEventListener('online',()=>{if(sb&&cloudUser&&cloudReady){if(cloudDirty)flushCloud();else pullCloud(false).catch(()=>{})}});
+
 statuses.forEach(s=>{$('statusFilter').add(new Option(s[0],s[0]));$('editStatus').add(new Option(s[0],s[0]))});
 function formatWhen(date,time,end){if(!date||!time)return 'Scheduling in progress';let dateStr;const [y,m,d]=date.split('-').map(Number);dateStr=new Date(y,m-1,d).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'});let timeLabel=t=>{let [h,mi]=t.split(':').map(Number);return new Date(2000,0,1,h,mi).toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})};return `📅 ${dateStr} · ${timeLabel(time)}${end?' – '+timeLabel(end):''}`}
 function parseLegacy(x){let v=x.nextDateTime||x.nextDate||'';let m=String(v).match(/^(\d{4}-\d\d-\d\d)(?:T(\d\d:\d\d))?/);return m?{date:m[1],start:m[2]||'',end:'',format:'',notes:''}:null}
@@ -155,6 +235,9 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{currentTab=b.dataset
 function download(content,name,mime){let blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}const esc=s=>'"'+String(s??'').replaceAll('"','""')+'"';
 $('exportBtn').onclick=()=>{const cols=['Company','Position','Term','Action','Status','Last Updated','Application URL','Application Notes','Interview Date','Interview Start','Interview End','Interview Format','Interview Notes'];const rows=data.flatMap(x=>{const ev=entriesFor(x).filter(z=>z.source!=='placeholder');return (ev.length?ev:[{}]).map(z=>[x.company,x.role,x.term,action(x.status),x.status,x.updated,x.url,x.notes,z.date||'',z.start||'',z.end||'',z.format||'',z.notes||''])});download([cols,...rows].map(row=>row.map(esc).join(',')).join('\r\n'),'internship-tracker.csv','text/csv;charset=utf-8')};
 $('jsonBtn').onclick=()=>download(JSON.stringify(data,null,2),'internship-tracker-backup.json','application/json');$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const v=JSON.parse(await f.text());if(!Array.isArray(v)||!v.every(x=>x&&typeof x.company==='string'&&typeof x.role==='string'&&typeof x.term==='string'&&typeof x.status==='string'))throw Error('Invalid tracker backup');if(confirm(`Replace ${data.length} applications with ${v.length} imported applications?`)){data=v.map((x,i)=>({...x,id:uid(),status:normalize(x.status),order:i,notes:x.notes||'',nextDateTime:x.nextDateTime||'',interviews:Array.isArray(x.interviews)?x.interviews:[]}));save();render()}}catch(err){alert('Import failed: '+err.message)}finally{e.target.value=''}};
-save();render();
+saveLocal();render();
+const cfg=currentConfig();if(cfg.url&&cfg.key&&configureCloud(cfg)){
+ sb.auth.getSession().then(({data:sessionData,error})=>{if(error)cloudStatus('Sign-in error','error');else if(sessionData?.session)onAuthChange('INITIAL_SESSION',sessionData.session);else cloudStatus('Sign in to sync')});
+}else if(!cfg.url){cloudStatus('Local only')}
 })();
 </script></body></html>
