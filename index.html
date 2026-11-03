@@ -11,15 +11,55 @@
 
 /* Compact, interactive month calendar in the permanent sidebar */
 .calendar{border-top:1px solid #e9eef5;margin-top:20px;padding-top:19px}.calhead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}.calhead h2{font-size:16px;margin:0}.calnav{display:flex;gap:5px;align-items:center}.calnav button{border:1px solid #e3eaf2;background:#fff;border-radius:8px;color:#4a6385;cursor:pointer;font-weight:700;min-width:30px;height:30px}.calnav button:hover{background:#eaf2ff}.calmonth{font-size:13px;font-weight:800;color:#425875;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}.caltoday{border:0;background:transparent;color:#39659c;font-size:11px;font-weight:700;cursor:pointer;padding:3px 5px}.calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.calweekday{text-align:center;font-size:10px;font-weight:800;color:#9aa8bc;padding:4px 0 7px}.calday{min-width:0;min-height:49px;background:#fbfcfe;border:1px solid transparent;border-radius:8px;cursor:pointer;text-align:center;padding:5px 1px 3px;color:#53647b;display:flex;flex-direction:column;align-items:center;gap:2px}.calday:hover{background:#edf4ff}.calday.outside{opacity:.35}.calday.today .calnum{color:#fff;background:#3e679a}.calday.selected{border-color:#89a8dc;background:#eaf2ff}.calnum{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}.caldots{display:flex;gap:2px;justify-content:center;flex-wrap:wrap;max-width:100%}.caldot{height:5px;width:5px;background:#4c92cf;border-radius:50%}.calmore{font-size:9px;color:#50749d;line-height:1}.caleventlabel{max-width:100%;padding:0 2px;font-size:8px;color:#3675ae;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.calagenda{border-top:1px solid #edf1f6;margin-top:13px;padding-top:11px}.calagendatitle{font-size:12px;font-weight:800;color:#435873;margin:0 0 8px}.calagendaitem{width:100%;border:1px solid #e6edf5;border-radius:9px;background:#fff;padding:9px 10px;text-align:left;cursor:pointer;margin:0 0 7px;color:#334155}.calagendaitem:hover{background:#f2f7ff}.calagendaitem strong{display:block;font-size:12px}.calagendaitem span{font-size:11px;color:#70849b}.calagendaempty{font-size:11px;color:#96a3b5;padding:7px 0}.callegend{margin-top:7px;font-size:10px;color:#91a0b2}.callegend i{display:inline-block;background:#4c92cf;height:6px;width:6px;border-radius:50%;vertical-align:middle;margin-right:4px}
+
+/* Dashboard refinements: colored counters and spacious three-column desktop layout */
+.shell{max-width:1900px;padding-left:26px;padding-right:26px}
+.workspace{grid-template-columns:minmax(580px,1fr) minmax(245px,300px) minmax(340px,440px);gap:16px;align-items:start}
+.sidebar{position:static}
+.calendar{margin:0;padding:21px 22px;min-width:0;border-top:1px solid #e6ecf4}
+.calhead h2{font-size:18px}
+.calgrid{gap:5px}
+.calweekday{font-size:11px;padding:7px 0 10px}
+.calday{min-height:66px;padding:7px 3px 5px;gap:4px;border-radius:10px}
+.calnum{width:27px;height:27px;font-size:13px}
+.caleventlabel{font-size:10px;padding:0 3px}
+.caldot{width:6px;height:6px}
+.calmonth{font-size:15px}
+.calagendatitle{font-size:13px}
+.stat-title{display:flex;align-items:center;gap:9px}
+.stat-dot{display:inline-block;flex:0 0 auto;width:10px;height:10px;border-radius:50%;background:#9db6d6}
+.stat-dot.applications{background:#92a9d2}
+.stat-dot.offers{background:#76b987}
+.stat-dot.tasks{background:#e78c96}
+.stat-dot.waiting{background:#e6bf60}
+@media(max-width:1390px){
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(230px,280px) minmax(300px,370px)}
+ .shell{padding-left:16px;padding-right:16px}
+ .calendar{padding:18px 15px}
+ .calday{min-height:59px}
+}
+@media(max-width:1160px){
+ .workspace{grid-template-columns:minmax(0,1fr) minmax(300px,420px)}
+ .workspace>.panel:first-child{grid-column:1/-1}
+ .calendar{grid-column:2;grid-row:2}
+ .sidebar{grid-column:1;grid-row:2}
+ .sideentries{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+}
+@media(max-width:720px){
+ .workspace{grid-template-columns:1fr}
+ .workspace>.panel:first-child,.sidebar,.calendar{grid-column:1;grid-row:auto}
+ .sideentries{grid-template-columns:1fr}
+ .calday{min-height:55px}
+}
 </style></head><body><main class="shell">
-<header><div><div class="eyebrow">Career dashboard · 2027</div><h1>Internship Tracker ✳</h1><p>Applications, action items, interview dates, and notes in one place.</p></div><button class="button primary" id="newBtn">＋ New application</button></header>
+<header><div><div class="eyebrow">Career dashboard · 2027</div><h1>Internship Tracker ✳</h1><p>Applications, action items, interview dates, and notes in one place.</p></div><button class="button primary" id="newBtn">＋ Add application</button></header>
 <section class="stats" id="stats"></section><div class="workspace"><section class="panel"><div class="panelhead"><strong>Applications <span id="count" class="muted"></span></strong><span id="updated">Saved in your browser</span></div>
 <nav class="tabs" aria-label="Tracker views"><button class="tab active" data-tab="all">All</button><button class="tab" data-tab="todo">To-Do</button><button class="tab" data-tab="waiting">Waiting</button></nav>
 <div id="applicationView"><div class="toolbar"><input id="search" class="field search" type="search" placeholder="⌕  Search company or role…" aria-label="Search applications"><select id="statusFilter" class="field" aria-label="Filter by status"><option value="">All statuses</option></select><select id="seasonFilter" class="field" aria-label="Filter term"><option value="">All terms</option></select><select id="sort" class="field" aria-label="Sort applications"><option value="order">Sort: Custom order</option><option value="todo">Sort: To-Do first</option><option value="action">Sort: Action</option><option value="company">Sort: Company A–Z</option><option value="status">Sort: Status</option><option value="updated">Sort: Recently updated</option><option value="interview">Sort: Interview date</option></select></div>
 <div class="tablewrap"><table><thead><tr><th>Company</th><th>Position</th><th>Term</th><th>Action</th><th>Status</th><th>Last updated</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><div id="empty" class="empty hidden">No matching applications found.</div></div>
 </section>
 <aside class="panel sidebar" aria-label="Interview schedule and notes"><div class="sidehead"><h2>▣ Interview Schedule &amp; Notes</h2></div><p class="sideintro">Upcoming interviews and scheduling steps. Click an entry to set or edit its date, time, and notes.</p><div class="sideentries" id="sideEntries"></div><button class="button primary sidebutton" id="addInterviewBtn" type="button">＋ Add interview</button><p class="sidefoot">Interview and Scheduling Interview applications appear automatically. Dates are only displayed when you enter them.</p>
-<section class="calendar" aria-label="Interview calendar"><div class="calhead"><h2>▦ Interview Calendar</h2><div class="calnav"><button type="button" id="calPrev" aria-label="Previous month">‹</button><button type="button" id="calNext" aria-label="Next month">›</button></div></div><div class="calmonth"><span id="calMonthLabel"></span><button type="button" class="caltoday" id="calToday">Today</button></div><div class="calgrid" id="calGrid" role="group" aria-label="Calendar days"></div><div class="calagenda" id="calAgenda" aria-live="polite"></div><div class="callegend"><i></i> Days with scheduled interviews</div></section></aside></div>
+</aside><section class="panel calendar" aria-label="Interview calendar"><div class="calhead"><h2>▦ Interview Calendar</h2><div class="calnav"><button type="button" id="calPrev" aria-label="Previous month">‹</button><button type="button" id="calNext" aria-label="Next month">›</button></div></div><div class="calmonth"><span id="calMonthLabel"></span><button type="button" class="caltoday" id="calToday">Today</button></div><div class="calgrid" id="calGrid" role="group" aria-label="Calendar days"></div><div class="calagenda" id="calAgenda" aria-live="polite"></div><div class="callegend"><i></i> Days with scheduled interviews</div></section></div>
 <div class="footer"><span>Saved in this browser only · Export a backup before clearing browser data · GitHub Pages hosting does not sync data between devices</span><div class="buttons"><button class="button" id="exportBtn">↓ Export CSV</button><button class="button" id="jsonBtn">↓ Backup JSON</button><label class="button">↑ Import JSON<input type="file" id="importFile" accept=".json,application/json" hidden></label></div></div></main>
 <dialog id="editor"><form id="editForm" class="modal"><h2 id="modalTitle">Application</h2><p>Add details about your next interview or recruiting step.</p><div class="formgrid"><label>Company<input id="company" required maxlength="100" placeholder="Company"></label><label>Position<input id="role" required maxlength="160" placeholder="Software Engineering Intern"></label><label>Term<input id="term" required maxlength="60" placeholder="Summer 2027"></label><label>Status<select id="editStatus"></select></label><label>Legacy interview date (optional)<input type="datetime-local" id="nextDateTime"></label><label>Application URL<input type="url" id="url" placeholder="https://..."></label><label class="full">Interview &amp; recruiting notes<textarea id="notes" rows="5" placeholder="Interview format, recruiter, preparation, questions, next steps…"></textarea></label></div><div class="modalfoot"><button type="button" class="button danger hidden" id="deleteBtn">Delete</button><div class="buttons"><button type="button" id="cancelBtn" class="button">Cancel</button><button type="submit" class="button primary">Save application</button></div></div></form></dialog>
 
@@ -92,7 +132,7 @@ $('calPrev').onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),cal
 $('calNext').onclick=()=>{calendarMonth=new Date(calendarMonth.getFullYear(),calendarMonth.getMonth()+1,1);renderCalendar()};
 $('calToday').onclick=()=>{selectedCalendarDay=today();const now=new Date();calendarMonth=new Date(now.getFullYear(),now.getMonth(),1);renderCalendar()};
 function renderSidebar(){const el=$('sideEntries');el.replaceChildren();let all=allInterviews();if(!all.length){el.append(make('div','No interviews yet. Add one or set an application to Interview.','sideempty'));renderCalendar();return}for(const entry of all){const b=make('button',null,'sideentry');b.type='button';b.setAttribute('aria-label','Edit interview for '+entry.company);const line=make('div',null,'line');line.append(make('strong',entry.company));const scheduled=Boolean(entry.date&&entry.start);line.append(make('span',scheduled?'Interview':entry.application.status==='Scheduling Interview'?'Scheduling':'Interview','mini-tag '+(scheduled?'dated':'scheduling')));b.append(line);b.append(make('div',scheduled?formatWhen(entry.date,entry.start,entry.end):'◷ Scheduling in progress','when'));if(entry.format)b.append(make('div',entry.format,'hint'));if(entry.notes)b.append(make('div',entry.notes.length>85?entry.notes.slice(0,85)+'…':entry.notes,'hint'));b.onclick=()=>openInterview(entry);el.append(b)}renderCalendar()}
-function render(){const count={todo:0,waiting:0,complete:0};data.forEach(x=>{let a=action(x.status);count[a==='To-Do'?'todo':a==='Waiting'?'waiting':'complete']++});$('stats').replaceChildren(...[['Applications',data.length],['Offers accepted',count.complete],['To-Do items',count.todo],['Waiting on updates',count.waiting]].map(([label,num])=>{let n=make('div',null,'stat');n.append(make('div',label,'label'),make('div',String(num),'num'));return n}));
+function render(){const count={todo:0,waiting:0,complete:0};data.forEach(x=>{let a=action(x.status);count[a==='To-Do'?'todo':a==='Waiting'?'waiting':'complete']++});$('stats').replaceChildren(...[['Applications',data.length,'applications'],['Offers accepted',count.complete,'offers'],['To-Do items',count.todo,'tasks'],['Waiting on updates',count.waiting,'waiting']].map(([label,num,tone])=>{let n=make('div',null,'stat');let header=make('div',null,'stat-title');header.append(make('span','', 'stat-dot '+tone),make('span',label,'label'));n.append(header,make('div',String(num),'num'));return n}));
 document.querySelectorAll('.tab').forEach(n=>{n.classList.toggle('active',n.dataset.tab===currentTab);n.setAttribute('aria-selected',String(n.dataset.tab===currentTab))});
 const terms=[...new Set(data.map(x=>x.term))].sort(),term=$('seasonFilter').value;$('seasonFilter').replaceChildren(new Option('All terms',''),...terms.map(x=>new Option(x,x)));$('seasonFilter').value=terms.includes(term)?term:'';
 let q=$('search').value.toLowerCase().trim();let visible=data.filter(x=>(!q||[x.company,x.role,x.notes].some(y=>String(y||'').toLowerCase().includes(q)))&&(!$('statusFilter').value||x.status===$('statusFilter').value)&&(!$('seasonFilter').value||x.term===$('seasonFilter').value)&&(currentTab==='all'||(currentTab==='todo'&&action(x.status)==='To-Do')||(currentTab==='waiting'&&action(x.status)==='Waiting')));
